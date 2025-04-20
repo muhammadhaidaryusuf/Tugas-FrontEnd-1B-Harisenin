@@ -45,4 +45,4 @@ const userService = {
   },
 };
 
-export default service
+export default userService
