@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import LabelInput from "./LabelInput";
 
+
 function PageAuth({title, subtitle, buttonText, isLogin}) {
     const [username, setUsername] = useState("Budi");
     const [email, setEmail] = useState("budi@gmail.com");

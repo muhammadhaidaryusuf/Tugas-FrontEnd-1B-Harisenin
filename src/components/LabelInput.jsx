@@ -9,4 +9,4 @@ const LabelInput = ({htmlFor, label}) => {
   );
 }
 
-export default LabelInput
+export default LabelInput;

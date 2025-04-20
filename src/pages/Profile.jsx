@@ -3,14 +3,36 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "./../components/Navbar";
 import M_List from "./My_List";
 import SubscriberStatus from "./../components/SubscriberStatus";
+import userService from "../components/services/api/service";
 
 const Profile = () => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState({
-    username: "Nama Pengguna",
-    email: "contoh@email.com",
-    password: "password123",
+    id: "",
+    username: "",
+    email: "",
+    password: "", // Hanya untuk perubahan password
   });
+
+  // Load current user data
+  useEffect(() => {
+    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    if (currentUser) {
+      const user = userService.getUserById(currentUser.id);
+      if (user) {
+        setUserData({
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          password: "", // Jangan tampilkan password asli
+        });
+      } else {
+        navigate("/login");
+      }
+    } else {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const handleInputChange = (field, value) => {
     setUserData((prevData) => ({
@@ -20,12 +42,43 @@ const Profile = () => {
   };
 
   const handleDelete = () => {
-    alert("Fungsi delete akan dijalankan di sini");
-    navigate("/");
+    if (window.confirm("Apakah Anda yakin ingin menghapus akun Anda?")) {
+      userService.deleteUser(userData.id);
+      userService.logout();
+      navigate("/");
+    }
   };
 
   const handleUpdate = () => {
-    alert("Fungsi update akan dijalankan di sini");
+    if (!userData.username || !userData.email) {
+      alert("Username dan email harus diisi");
+      return;
+    }
+
+    const updatedData = {
+      username: userData.username,
+      email: userData.email,
+    };
+
+    // Hanya update password jika diisi
+    if (userData.password) {
+      updatedData.password = userData.password;
+    }
+
+    userService.updateUser(userData.id, updatedData);
+
+    // Update currentUser di localStorage
+    localStorage.setItem(
+      "currentUser",
+      JSON.stringify({
+        id: userData.id,
+        username: userData.username,
+        email: userData.email,
+      })
+    );
+
+    alert("Profil berhasil diperbarui!");
+    setUserData((prev) => ({ ...prev, password: "" })); // Reset password field
   };
 
   return (
