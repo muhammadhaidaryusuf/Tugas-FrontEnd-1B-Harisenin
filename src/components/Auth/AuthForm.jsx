@@ -157,7 +157,7 @@ function AuthForm({ title, subtitle, buttonText, isLogin }) {
         <>
           <div className="text-center text-sm text-gray-400">Atau</div>
           <button type="button" className="w-full flex items-center justify-center bg-transparent text-white py-2 rounded-full border border-white hover:bg-[#707174] transition duration-300">
-            <img src="/img/googleLogo.png" alt="Google" className="w-5 h-5 mr-2" />
+            <img src="/img/google-logo.png" alt="Google" className="w-5 h-5 mr-2" />
             {title} dengan Google
           </button>
         </>

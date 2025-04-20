@@ -5,27 +5,27 @@ import Footer from '../components/Footer';
 const PackageSubscription = () => {
   const benefits = [
         {
-            icon: "/img/componen-img/download-icon.png",
+            icon: "/img/img-component/download-icon.png",
             title: "Download Konten Pilihan",
         },
         {
-            icon: "/img/componen-img/ads-icon.png",
+            icon: "/img/img-component/ads-icon.png",
             title: "Tidak Ada Iklan",
         },
         {
-            icon: "/img/componen-img/movie-icon.png",
+            icon: "/img/img-component/movie-icon.png",
             title: "Tonton Semua Konten",
         },
         {
-            icon: "/img/componen-img/4k-icon.png",
+            icon: "/img/img-component/4k-icon.png",
             title: "Kualitas Maksimal Sampai Dengan 4K",
         },
         {
-            icon: "/img/componen-img/cell-phone-icon.png",
+            icon: "/img/img-component/cell-phone-icon.png",
             title: "Tonton di TV, Tablet, Mobile, dan Laptop",
         },
         {
-            icon: "/img/componen-img/subtitles-icon.png",
+            icon: "/img/img-component/subtitles-icon.png",
             title: "Subtitle Untuk Konten Pilihan",
         },
     ];
