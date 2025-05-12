@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from 'react';
-import Navbar from "./../components/Navbar";
-import M_List from "./My_List";
-import SubscriberStatus from "./../components/SubscriberStatus";
 import userService from "../components/services/api/service";
+import Navbar from "./../components/Navbar";
+import SubscriberStatus from "./../components/SubscriberStatus";
+import M_List from "./My_List";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -12,27 +11,39 @@ const Profile = () => {
     id: "",
     username: "",
     email: "",
-    password: "", // Hanya untuk perubahan password
+    password: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   // Load current user data
   useEffect(() => {
-    const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-    if (currentUser) {
-      const user = userService.getUserById(currentUser.id);
-      if (user) {
-        setUserData({
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          password: "", // Jangan tampilkan password asli
-        });
-      } else {
-        navigate("/login");
+    const loadUserData = async () => {
+      setIsLoading(true);
+      try {
+        const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+        if (currentUser) {
+          const user = await userService.get(currentUser.id);
+          if (user) {
+            setUserData({
+              id: user.id,
+              username: user.username,
+              email: user.email,
+              password: "",
+            });
+          } else {
+            navigate("/login");
+          }
+        }
+      } catch (err) {
+        setError("Gagal memuat data profil");
+        console.error(err);
+      } finally {
+        setIsLoading(false);
       }
-    } else {
-      navigate("/login");
-    }
+    };
+
+    loadUserData();
   }, [navigate]);
 
   const handleInputChange = (field, value) => {
@@ -42,45 +53,57 @@ const Profile = () => {
     }));
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (window.confirm("Apakah Anda yakin ingin menghapus akun Anda?")) {
-      userService.deleteUser(userData.id);
-      userService.logout();
-      navigate("/");
+      try {
+        await userService.delete(userData.id);
+        userService.logout();
+        navigate("/");
+      } catch (err) {
+        setError("Gagal menghapus akun");
+        console.error(err);
+      }
     }
   };
 
-  const handleUpdate = () => {
+  const handleUpdate = async () => {
     if (!userData.username || !userData.email) {
       alert("Username dan email harus diisi");
       return;
     }
 
-    const updatedData = {
-      username: userData.username,
-      email: userData.email,
-    };
-
-    // Hanya update password jika diisi
-    if (userData.password) {
-      updatedData.password = userData.password;
-    }
-
-    userService.updateUser(userData.id, updatedData);
-
-    // Update currentUser di localStorage
-    localStorage.setItem(
-      "currentUser",
-      JSON.stringify({
-        id: userData.id,
+    try {
+      const updatedData = {
         username: userData.username,
         email: userData.email,
-      })
-    );
+      };
 
-    alert("Profil berhasil diperbarui!");
-    setUserData((prev) => ({ ...prev, password: "" })); // Reset password field
+      if (userData.password) {
+        updatedData.password = userData.password;
+      }
+
+      const updatedUser = await userService.update(userData.id, updatedData);
+
+      localStorage.setItem(
+        "currentUser",
+        JSON.stringify({
+          id: updatedUser.id,
+          username: updatedUser.username,
+          email: updatedUser.email,
+        })
+      );
+
+      alert("Profil berhasil diperbarui!");
+      setUserData((prev) => ({ ...prev, password: "" }));
+      setError(null);
+    } catch (err) {
+      setError("Gagal memperbarui profil");
+      console.error(err);
+    }
   };
+
+  if (isLoading) return <div>Memuat data profil...</div>;
+  if (error) return <div className="error">{error}</div>;
 
   return (
     <>
@@ -113,7 +136,13 @@ const Profile = () => {
                 </div>
                 <div className="mb-4 bg-gray-700 rounded-lg">
                   <label className="block text-sm font-medium mb-2 text-[#9D9EA1] px-2">Kata Sandi</label>
-                  <input type="password" value={userData.password} className="block w-full bg-gray-700 text-white rounded-lg p-2" onChange={(e) => handleInputChange("password", e.target.value)} />
+                  <input
+                    type="password"
+                    value={userData.password}
+                    className="block w-full bg-gray-700 text-white rounded-lg p-2"
+                    onChange={(e) => handleInputChange("password", e.target.value)}
+                    placeholder="Kosongkan jika tidak ingin mengubah"
+                  />
                 </div>
               </div>
               <div className="flex gap-2">
