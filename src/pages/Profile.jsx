@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import userService from "../components/services/api/service";
+import DeleteButton from "../components/services/api/Delete";
+import UpdateButton from "../components/services/api/Update";
 import Navbar from "./../components/Navbar";
 import SubscriberStatus from "./../components/SubscriberStatus";
 import M_List from "./My_List";
@@ -92,10 +94,10 @@ const Profile = () => {
           email: updatedUser.email,
         })
       );
-
       alert("Profil berhasil diperbarui!");
       setUserData((prev) => ({ ...prev, password: "" }));
       setError(null);
+      return updatedUser;
     } catch (err) {
       setError("Gagal memperbarui profil");
       console.error(err);
@@ -146,12 +148,8 @@ const Profile = () => {
                 </div>
               </div>
               <div className="flex gap-2">
-                <button onClick={handleUpdate} className="bg-[#09147A] text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
-                  Simpan Perubahan
-                </button>
-                <button onClick={handleDelete} className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300">
-                  Hapus Akun
-                </button>
+                <UpdateButton id={userData.id} onUpdate={handleUpdate} />
+                <DeleteButton id={userData.id} onDelete={handleDelete} />
               </div>
             </div>
             <div className="Subscribe">

@@ -14,11 +14,17 @@ import Subscription from "./pages/PackageSubscription";
 import Payment from "./components/Payment";
 import PayFinish from "./components/PayFinish";
 import VideoPage from "./pages/VideoPage";
+import ListView from "./components/ListView";
+import Add from "../store/redux/Add";
+import Edit from "../store/redux/Edit";
 
 function App() {
   return (
     <Router>
       <Routes>
+        <Route path="/listview" element={<ListView />} />
+        <Route path="/add" element={<Add />} />
+        <Route path="/edit" element={<Edit />} />
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/Dashboard" element={<DashBoard />} />

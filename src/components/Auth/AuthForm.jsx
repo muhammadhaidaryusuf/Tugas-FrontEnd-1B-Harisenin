@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import LabelInput from "./../LabelInput";
 import userService from "../services/api/service";
+import LoginUser from "../services/api/LoginUser";
 
 function AuthForm({ title, subtitle, buttonText, isLogin }) {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ function AuthForm({ title, subtitle, buttonText, isLogin }) {
   const loginUser = async () => {
     setIsLoading(true);
     try {
-      const user = await userService.login(username, password);
+      const user = await LoginUser(username, password);
       if (user) {
         alert("Login berhasil!");
         localStorage.setItem("isLoggedIn", true);
